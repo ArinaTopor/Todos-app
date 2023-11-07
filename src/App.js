@@ -1,5 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
-import { addTodo, removeTodo, selectVisibleTodos, toggleTodo } from "./store";
+import {
+  addTodo,
+  removeTodo,
+  toggleTodo,
+  setFilter,
+  selectVisibleTodos,
+} from "./store";
 
 export default function App() {
   return (
@@ -30,7 +36,8 @@ const NewTodo = () => {
 };
 
 const TodoList = () => {
-  const todos = useSelector(state => state.todos);
+  const activeFilter = useSelector((state) => state.filter);
+  const todos = useSelector((state) => selectVisibleTodos(state, activeFilter));
   const dispatch = useDispatch();
 
   return (
@@ -51,11 +58,16 @@ const TodoList = () => {
 };
 
 const FilterTodo = () => {
+  const activeFilter = useSelector((state) => state.filter);
+  const dispatch = useDispatch();
+  const handleFilterChange = (filter) => {
+    dispatch(setFilter(filter));
+  };
   return (
     <div>
-      <button>all</button>
-      <button>active</button>
-      <button>completed</button>
+      <button onClick={() => handleFilterChange("all")}>all</button>
+      <button onClick={() => handleFilterChange("active")}>active</button>
+      <button onClick={() => handleFilterChange("completed")}>completed</button>
     </div>
   );
-}
+};

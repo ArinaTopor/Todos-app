@@ -1,20 +1,20 @@
 import { nanoid, createSlice, configureStore } from "@reduxjs/toolkit";
 
 const todoSlice = createSlice({
-  name: '@@todos',
+  name: "@@todos",
   initialState: [],
   reducers: {
     addTodo: {
       reducer: (state, action) => {
-        state.push(action.payload)
+        state.push(action.payload);
       },
       prepare: (title) => ({
         payload: {
           title,
           id: nanoid(),
-          completed: false
-        }
-      })
+          completed: false,
+        },
+      }),
     },
     removeTodo: (state, action) => {
       const id = action.payload;
@@ -28,28 +28,41 @@ const todoSlice = createSlice({
   },
 });
 
-export const {addTodo, removeTodo, toggleTodo} = todoSlice.actions;
+const filterSlice = createSlice({
+  name: "@@filter",
+  initialState: "all",
+  reducers: {
+    setFilter: (_, action) => {
+      // console.log(action.payload);
+      return action.payload;
+    },
+  },
+});
+
+export const { addTodo, removeTodo, toggleTodo } = todoSlice.actions;
+export const { setFilter } = filterSlice.actions;
 
 export const store = configureStore({
   reducer: {
     todos: todoSlice.reducer,
+    filter: filterSlice.reducer,
   },
   devTools: true,
 });
 
 export const selectVisibleTodos = (state, filter) => {
   switch (filter) {
-    case 'all': {
+    case "all": {
       return state.todos;
     }
-    case 'active': {
-      return state.todos.filter(todo => !todo.completed);
+    case "active": {
+      return state.todos.filter((todo) => !todo.completed);
     }
-    case 'completed': {
-      return state.todos.filter(todo => todo.completed);
+    case "completed": {
+      return state.todos.filter((todo) => todo.completed);
     }
     default: {
       return state.todos;
     }
   }
-}
+};
